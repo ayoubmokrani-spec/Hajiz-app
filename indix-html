@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f0f14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>احجز | منصة الحجوزات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f14;
+    --card: #1a1a24;
+    --card2: #22222f;
+    --accent: #c8a96e;
+    --accent2: #e8c98e;
+    --text: #f0ede8;
+    --muted: #888899;
+    --green: #4ecb8d;
+    --red: #e05c6a;
+    --border: rgba(200,169,110,0.15);
+    --radius: 18px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; min-height: 100vh; padding-bottom: 80px; }
+  .screen.active { display: block; }
+
+  /* ===== HEADER ===== */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,15,20,0.92);
+    backdrop-filter: blur(20px);
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 { font-size: 22px; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; }
+  .header-back {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--card2); border: none; color: var(--text);
+    font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ===== HOME ===== */
+  .hero {
+    padding: 30px 20px 20px;
+    background: linear-gradient(160deg, #1a1430 0%, #0f0f14 60%);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; left: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(200,169,110,0.15);
+    color: var(--accent);
+    font-size: 12px; font-weight: 700;
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 12px; border: 1px solid var(--border);
+  }
+  .hero h2 { font-size: 30px; font-weight: 900; line-height: 1.2; margin-bottom: 6px; }
+  .hero h2 span { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+  .search-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 16px;
+  }
+  .search-bar input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-family: 'Tajawal', sans-serif;
+    font-size: 15px; direction: rtl;
+  }
+  .search-bar input::placeholder { color: var(--muted); }
+  .search-icon { color: var(--muted); font-size: 18px; }
+
+  /* CATEGORIES */
+  .section { padding: 24px 20px 0; }
+  .section-title {
+    font-size: 17px; font-weight: 700; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .cats {
+    display: flex; gap: 10px; overflow-x: auto;
+    padding-bottom: 4px; scrollbar-width: none;
+  }
+  .cats::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px;
+    cursor: pointer; transition: all 0.2s;
+    min-width: 80px;
+  }
+  .cat-btn.active, .cat-btn:active {
+    background: rgba(200,169,110,0.15);
+    border-color: var(--accent);
+  }
+  .cat-icon { font-size: 26px; }
+  .cat-label { font-size: 11px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+  .cat-btn.active .cat-label { color: var(--accent); }
+
+  /* PLACE CARDS */
+  .places-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; padding: 0 20px;
+  }
+  .place-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    cursor: pointer; transition: transform 0.15s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .place-card:active { transform: scale(0.97); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .place-img {
+    width: 100%; height: 110px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+    background: linear-gradient(135deg, var(--card2) 0%, #2a2a3a 100%);
+  }
+  .place-info { padding: 10px 12px; }
+  .place-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .place-type { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .place-meta { display: flex; align-items: center; justify-content: space-between; }
+  .rating { font-size: 11px; color: var(--accent); font-weight: 700; }
+  .price-tag {
+    font-size: 10px; color: var(--green);
+    background: rgba(78,203,141,0.1);
+    padding: 2px 8px; border-radius: 20px;
+  }
+
+  /* ===== DETAIL SCREEN ===== */
+  .detail-hero {
+    height: 200px; display: flex; align-items: center; justify-content: center;
+    font-size: 80px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2a1a3e 100%);
+    position: relative;
+  }
+  .detail-badge {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(200,169,110,0.9); color: #0f0f14;
+    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .detail-body { padding: 20px; }
+  .detail-name { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
+  .detail-type { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
+  .detail-stats {
+    display: flex; gap: 16px; margin-bottom: 20px;
+    padding: 14px; background: var(--card2); border-radius: 14px;
+  }
+  .stat { text-align: center; flex: 1; }
+  .stat-val { font-size: 18px; font-weight: 900; color: var(--accent); }
+  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .services-list { margin-bottom: 20px; }
+  .service-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .service-name { font-size: 14px; font-weight: 600; }
+  .service-duration { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .service-price { font-size: 15px; font-weight: 700; color: var(--accent); }
+
+  .btn-primary {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #0f0f14; font-family: 'Tajawal', sans-serif;
+    font-size: 16px; font-weight: 900; border: none;
+    border-radius: 14px; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:active { opacity: 0.85; }
+
+  /* ===== BOOKING SCREEN ===== */
+  .booking-section { padding: 20px; }
+  .booking-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
+
+  .dates-scroll {
+    display: flex; gap: 10px; overflow-x: auto;
+    scrollbar-width: none; margin-bottom: 20px;
+  }
+  .dates-scroll::-webkit-scrollbar { display: none; }
+  .date-btn {
+    flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 12px 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; cursor: pointer; transition: all 0.2s;
+    min-width: 62px;
+  }
+  .date-btn.selected {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .date-btn.selected .date-day,
+  .date-btn.selected .date-num { color: #0f0f14; }
+  .date-day { font-size: 10px; color: var(--muted); font-weight: 600; }
+  .date-num { font-size: 20px; font-weight: 900; }
+
+  .times-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 20px;
+  }
+  .time-btn {
+    padding: 12px 8px; text-align: center;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; cursor: pointer;
+    font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 600;
+    color: var(--text); transition: all 0.2s;
+  }
+  .time-btn.selected { background: rgba(200,169,110,0.2); border-color: var(--accent); color: var(--accent); }
+  .time-btn.booked { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 14px 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text);
+    font-family: 'Tajawal', sans-serif; font-size: 15px;
+    outline: none; transition: border-color 0.2s;
+    direction: rtl;
+  }
+  .form-input:focus { border-color: var(--accent); }
+
+  /* ===== CONFIRMATION ===== */
+  .confirm-screen {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 40px 20px; text-align: center;
+  }
+  .confirm-icon {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(78,203,141,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 50px; margin-bottom: 24px;
+    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes pop {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .confirm-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
+  .confirm-sub { color: var(--muted); font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
+  .confirm-card {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; text-align: right;
+    margin-bottom: 24px;
+  }
+  .confirm-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .confirm-row:last-child { border-bottom: none; }
+  .confirm-label { font-size: 13px; color: var(--muted); }
+  .confirm-value { font-size: 14px; font-weight: 700; }
+
+  /* ===== MY BOOKINGS ===== */
+  .bookings-list { padding: 20px; }
+  .booking-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeUp 0.3s ease both;
+  }
+  .booking-emoji { font-size: 36px; }
+  .booking-info { flex: 1; }
+  .booking-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .booking-time { font-size: 12px; color: var(--muted); }
+  .booking-status {
+    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .status-confirmed { background: rgba(78,203,141,0.15); color: var(--green); }
+  .status-pending { background: rgba(200,169,110,0.15); color: var(--accent); }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .empty-icon { font-size: 60px; margin-bottom: 16px; }
+  .empty-state p { font-size: 15px; }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(15,15,20,0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex; z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-btn {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    padding: 12px 0; cursor: pointer;
+    border: none; background: none; color: var(--muted);
+    font-family: 'Tajawal', sans-serif; font-size: 10px;
+    transition: color 0.2s;
+  }
+  .nav-btn.active { color: var(--accent); }
+  .nav-icon { font-size: 22px; }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: var(--card2); color: var(--text);
+    padding: 12px 20px; border-radius: 30px;
+    font-size: 13px; font-weight: 600;
+    border: 1px solid var(--border);
+    opacity: 0; transition: opacity 0.3s; z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ===== HOME ===== -->
+<div id="home" class="screen active">
+  <div class="header">
+    <h1>✦ احجز</h1>
+    <div style="display:flex;gap:8px">
+      <button class="header-back" onclick="showToast('👋 أهلاً!')">👤</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-tag">منصة الحجوزات الذكية</div>
+    <h2>احجز موعدك<br><span>في ثوانٍ</span></h2>
+    <p>حلاقين، صالونات، مقاهي، مطاعم وأكثر</p>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="ابحث عن مكان..." oninput="filterPlaces(this.value)">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">الفئات</div>
+    <div class="cats" id="cats">
+      <button class="cat-btn active" onclick="filterCat('all', this)">
+        <span class="cat-icon">🌟</span>
+        <span class="cat-label">الكل</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('barber', this)">
+        <span class="cat-icon">💈</span>
+        <span class="cat-label">حلاقين</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('salon', this)">
+        <span class="cat-icon">💅</span>
+        <span class="cat-label">صالونات</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('cafe', this)">
+        <span class="cat-icon">☕</span>
+        <span class="cat-label">مقاهي</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('restaurant', this)">
+        <span class="cat-icon">🍽️</span>
+        <span class="cat-label">مطاعم</span>
+      </button>
+      <button class="cat-btn" onclick="filterCat('spa', this)">
+        <span class="cat-icon">🧖</span>
+        <span class="cat-label">سبا</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">الأماكن المتاحة</div>
+  </div>
+  <div class="places-grid" id="placesGrid"></div>
+</div>
+
+<!-- ===== DETAIL ===== -->
+<div id="detail" class="screen">
+  <div class="header">
+    <h1 id="detailTitle">التفاصيل</h1>
+    <button class="header-back" onclick="goHome()">←</button>
+  </div>
+  <div id="detailContent"></div>
+</div>
+
+<!-- ===== BOOKING ===== -->
+<div id="booking" class="screen">
+  <div class="header">
+    <h1>اختر الموعد</h1>
+    <button class="header-back" onclick="showScreen('detail')">←</button>
+  </div>
+
+  <div class="booking-section">
+    <h3>📅 اختر التاريخ</h3>
+    <div class="dates-scroll" id="datesScroll"></div>
+
+    <h3>⏰ اختر الوقت</h3>
+    <div class="times-grid" id="timesGrid"></div>
+
+    <h3>👤 بياناتك</h3>
+    <div class="form-group">
+      <label class="form-label">الاسم الكامل</label>
+      <input class="form-input" id="userName" type="text" placeholder="أدخل اسمك">
+    </div>
+    <div class="form-group">
+      <label class="form-label">رقم الهاتف</label>
+      <input class="form-input" id="userPhone" type="tel" placeholder="05xxxxxxxx">
+    </div>
+    <div class="form-group">
+      <label class="form-label">الخدمة المطلوبة</label>
+      <select class="form-input" id="userService">
+        <option value="">-- اختر الخدمة --</option>
+      </select>
+    </div>
+
+    <button class="btn-primary" onclick="confirmBooking()">✅ تأكيد الحجز</button>
+  </div>
+</div>
+
+<!-- ===== CONFIRMATION ===== -->
+<div id="confirmation" class="screen">
+  <div class="confirm-screen">
+    <div class="confirm-icon">🎉</div>
+    <div class="confirm-title">تم الحجز!</div>
+    <div class="confirm-sub">موعدك محجوز بنجاح<br>سنرسل لك تذكيراً قبل الموعد</div>
+    <div class="confirm-card" id="confirmCard"></div>
+    <button class="btn-primary" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+</div>
+
+<!-- ===== MY BOOKINGS ===== -->
+<div id="mybookings" class="screen">
+  <div class="header">
+    <h1>حجوزاتي</h1>
+  </div>
+  <div class="bookings-list" id="bookingsList"></div>
+</div>
+
+<!-- ===== BOTTOM NAV ===== -->
+<div class="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="goHome()">
+    <span class="nav-icon">🏠</span>الرئيسية
+  </button>
+  <button class="nav-btn" id="nav-mybookings" onclick="showMyBookings()">
+    <span class="nav-icon">📋</span>حجوزاتي
+  </button>
+  <button class="nav-btn" id="nav-profile" onclick="showToast('قريباً!')">
+    <span class="nav-icon">👤</span>حسابي
+  </button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const PLACES = [
+  { id:1, name:'صالون الأناقة', type:'barber', cat:'barber', emoji:'💈', rating:'4.9', price:'من 30 ر.س', wait:'~10 دقائق',
+    services:['قص شعر - 30 ر.س / 30 دقيقة','حلاقة ذقن - 20 ر.س / 20 دقيقة','قص + ذقن - 45 ر.س / 45 دقيقة','تلوين - 80 ر.س / 90 دقيقة'] },
+  { id:2, name:'بيوتي بار', type:'salon', cat:'salon', emoji:'💅', rating:'4.8', price:'من 50 ر.س', wait:'~15 دقائق',
+    services:['مانيكير - 50 ر.س / 45 دقيقة','باديكير - 60 ر.س / 60 دقيقة','كيراتين - 200 ر.س / 120 دقيقة','صبغة شعر - 150 ر.س / 90 دقيقة'] },
+  { id:3, name:'كافيه مُود', type:'cafe', cat:'cafe', emoji:'☕', rating:'4.7', price:'من 20 ر.س', wait:'~5 دقائق',
+    services:['طاولة للشخصين - 20 ر.س / 60 دقيقة','طاولة للأربعة - 30 ر.س / 90 دقيقة','غرفة خاصة - 100 ر.س / 120 دقيقة'] },
+  { id:4, name:'مطعم أصيل', type:'restaurant', cat:'restaurant', emoji:'🍽️', rating:'4.9', price:'من 60 ر.س', wait:'~20 دقائق',
+    services:['طاولة غداء - 60 ر.س / 90 دقيقة','طاولة عشاء - 80 ر.س / 120 دقيقة','حفلة خاصة - 500 ر.س / 180 دقيقة'] },
+  { id:5, name:'سبا الراحة', type:'spa', cat:'spa', emoji:'🧖', rating:'5.0', price:'من 120 ر.س', wait:'~30 دقيقة',
+    services:['مساج كامل - 120 ر.س / 60 دقيقة','جلسة سبا - 180 ر.س / 90 دقيقة','حمام مغربي - 200 ر.س / 120 دقيقة'] },
+  { id:6, name:'باربر كينج', type:'barber', cat:'barber', emoji:'✂️', rating:'4.6', price:'من 25 ر.س', wait:'~5 دقائق',
+    services:['قص أطفال - 25 ر.س / 20 دقيقة','قص رجالي - 35 ر.س / 30 دقيقة','باكج كامل - 55 ر.س / 60 دقيقة'] },
+];
+
+let currentPlace = null;
+let selectedDate = null;
+let selectedTime = null;
+let myBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+let currentCat = 'all';
+
+// ===== RENDER PLACES =====
+function renderPlaces(places) {
+  const grid = document.getElementById('placesGrid');
+  grid.innerHTML = '';
+  if (!places.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0">لا توجد نتائج 😕</div>';
+    return;
+  }
+  places.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'place-card';
+    card.style.animationDelay = `${i * 0.07}s`;
+    card.innerHTML = `
+      <div class="place-img">${p.emoji}</div>
+      <div class="place-info">
+        <div class="place-name">${p.name}</div>
+        <div class="place-type">${p.type === 'barber' ? 'حلاقة رجالية' : p.type === 'salon' ? 'صالون نسائي' : p.type === 'cafe' ? 'مقهى' : p.type === 'restaurant' ? 'مطعم' : 'سبا'}</div>
+        <div class="place-meta">
+          <span class="rating">⭐ ${p.rating}</span>
+          <span class="price-tag">${p.price}</span>
+        </div>
+      </div>`;
+    card.onclick = () => openDetail(p);
+    grid.appendChild(card);
+  });
+}
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat === 'all' ? PLACES : PLACES.filter(p => p.cat === cat);
+  renderPlaces(filtered);
+}
+
+function filterPlaces(q) {
+  const filtered = PLACES.filter(p =>
+    (currentCat === 'all' || p.cat === currentCat) &&
+    p.name.includes(q)
+  );
+  renderPlaces(filtered);
+}
+
+// ===== DETAIL =====
+function openDetail(place) {
+  currentPlace = place;
+  document.getElementById('detailTitle').textContent = place.name;
+  const services = place.services.map(s => {
+    const parts = s.split(' - ');
+    const name = parts[0];
+    const rest = parts[1] ? parts[1].split(' / ') : ['',''];
+    return `<div class="service-item">
+      <div><div class="service-name">${name}</div><div class="service-duration">⏱ ${rest[1] || ''}</div></div>
+      <div class="service-price">${rest[0] || ''}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-hero">
+      <span style="font-size:80px">${place.emoji}</span>
+      <div class="detail-badge">⭐ ${place.rating}</div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-name">${place.name}</div>
+      <div class="detail-type">${place.price} • انتظار ${place.wait}</div>
+      <div class="detail-stats">
+        <div class="stat"><div class="stat-val">${place.rating}</div><div class="stat-lbl">التقييم</div></div>
+        <div class="stat"><div class="stat-val">${place.services.length}</div><div class="stat-lbl">خدمة</div></div>
+        <div class="stat"><div class="stat-val">٢٤/٧</div><div class="stat-lbl">متاح</div></div>
+      </div>
+      <div class="services-list">${services}</div>
+      <button class="btn-primary" onclick="openBooking()">📅 احجز الآن</button>
+    </div>`;
+  showScreen('detail');
+}
+
+// ===== BOOKING =====
+function openBooking() {
+  buildDates();
+  buildTimes();
+  buildServices();
+  showScreen('booking');
+}
+
+function buildDates() {
+  const container = document.getElementById('datesScroll');
+  container.innerHTML = '';
+  const days = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  const today = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const btn = document.createElement('button');
+    btn.className = 'date-btn' + (i === 0 ? ' selected' : '');
+    btn.innerHTML = `<span class="date-day">${days[d.getDay()]}</span><span class="date-num">${d.getDate()}</span>`;
+    const dateStr = d.toLocaleDateString('ar-SA');
+    if (i === 0) selectedDate = dateStr;
+    btn.onclick = () => {
+      document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedDate = dateStr;
+    };
+    container.appendChild(btn);
+  }
+}
+
+function buildTimes() {
+  const container = document.getElementById('timesGrid');
+  container.innerHTML = '';
+  const slots = ['9:00','9:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+  const booked = [2, 5, 9];
+  slots.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'time-btn' + (booked.includes(i) ? ' booked' : '');
+    btn.textContent = t;
+    if (!booked.includes(i)) {
+      btn.onclick = () => {
+        document.querySelectorAll('.time-btn:not(.booked)').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedTime = t;
+      };
+    }
+    container.appendChild(btn);
+  });
+}
+
+function buildServices() {
+  const sel = document.getElementById('userService');
+  sel.innerHTML = '<option value="">-- اختر الخدمة --</option>';
+  currentPlace.services.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.split(' - ')[0];
+    opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function confirmBooking() {
+  const name = document.getElementById('userName').value.trim();
+  const phone = document.getElementById('userPhone').value.trim();
+  const service = document.getElementById('userService').value;
+
+  if (!name) return showToast('⚠️ أدخل اسمك');
+  if (!phone) return showToast('⚠️ أدخل رقم هاتفك');
+  if (!service) return showToast('⚠️ اختر الخدمة');
+  if (!selectedDate) return showToast('⚠️ اختر التاريخ');
+  if (!selectedTime) return showToast('⚠️ اختر الوقت');
+
+  const booking = {
+    id: Date.now(),
+    place: currentPlace.name,
+    emoji: currentPlace.emoji,
+    name, phone, service, date: selectedDate, time: selectedTime,
+    status: 'confirmed'
+  };
+  myBookings.unshift(booking);
+  localStorage.setItem('bookings', JSON.stringify(myBookings));
+
+  document.getElementById('confirmCard').innerHTML = `
+    <div class="confirm-row"><span class="confirm-label">المكان</span><span class="confirm-value">${currentPlace.emoji} ${booking.place}</span></div>
+    <div class="confirm-row"><span class="confirm-label">الخدمة</span><span class="confirm-value">${booking.service}</span></div>
+    <div class="confirm-row"><span class="confirm-label">التاريخ</span><span class="confirm-value">${booking.date}</span></div>
+    <div class="confirm-row"><span class="confirm-label">الوقت</span><span class="confirm-value">${booking.time}</span></div>
+    <div class="confirm-row"><span class="confirm-label">الاسم</span><span class="confirm-value">${booking.name}</span></div>
+  `;
+  showScreen('confirmation');
+  document.getElementById('userName').value = '';
+  document.getElementById('userPhone').value = '';
+  selectedTime = null;
+}
+
+// ===== MY BOOKINGS =====
+function showMyBookings() {
+  setActiveNav('nav-mybookings');
+  const list = document.getElementById('bookingsList');
+  if (!myBookings.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>لا توجد حجوزات بعد<br>احجز موعدك الأول!</p></div>`;
+  } else {
+    list.innerHTML = myBookings.map((b,i) => `
+      <div class="booking-item" style="animation-delay:${i*0.06}s">
+        <div class="booking-emoji">${b.emoji}</div>
+        <div class="booking-info">
+          <div class="booking-name">${b.place}</div>
+          <div class="booking-time">📅 ${b.date} • ⏰ ${b.time}</div>
+          <div class="booking-time" style="margin-top:2px">✂️ ${b.service}</div>
+        </div>
+        <div class="booking-status status-confirmed">مؤكد ✓</div>
+      </div>`).join('');
+  }
+  showScreen('mybookings');
+}
+
+// ===== UTILS =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  setActiveNav('nav-home');
+  showScreen('home');
+}
+
+function setActiveNav(id) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Init
+renderPlaces(PLACES);
+</script>
+</body>
+</html>
