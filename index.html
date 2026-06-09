@@ -5,319 +5,378 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#0f0f14">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>احجز | منصة الحجوزات</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f14;
-    --card: #1a1a24;
-    --card2: #22222f;
-    --accent: #c8a96e;
-    --accent2: #e8c98e;
-    --text: #f0ede8;
-    --muted: #888899;
-    --green: #4ecb8d;
-    --red: #e05c6a;
-    --border: rgba(200,169,110,0.15);
-    --radius: 18px;
+    --bg: #0f0f14; --card: #1a1a24; --card2: #22222f;
+    --accent: #c8a96e; --accent2: #e8c98e; --text: #f0ede8;
+    --muted: #888899; --green: #4ecb8d; --red: #e05c6a;
+    --border: rgba(200,169,110,0.15); --radius: 18px;
   }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  .screen { display:none; min-height:100vh; padding-bottom:80px; }
+  .screen.active { display:block; }
 
-  body {
-    font-family: 'Tajawal', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
+  /* AUTH SCREEN */
+  .auth-screen {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; padding:40px 24px;
   }
+  .auth-logo { font-size:60px; margin-bottom:16px; }
+  .auth-title { font-size:32px; font-weight:900; color:var(--accent); margin-bottom:8px; }
+  .auth-sub { color:var(--muted); font-size:14px; margin-bottom:36px; text-align:center; }
+  .auth-tabs { display:flex; gap:0; margin-bottom:24px; background:var(--card); border-radius:12px; padding:4px; width:100%; }
+  .auth-tab {
+    flex:1; padding:10px; text-align:center; border-radius:10px;
+    font-family:'Tajawal',sans-serif; font-size:14px; font-weight:700;
+    border:none; background:none; color:var(--muted); cursor:pointer; transition:all 0.2s;
+  }
+  .auth-tab.active { background:var(--accent); color:#0f0f14; }
+  .auth-form { width:100%; }
+  .form-group { margin-bottom:14px; }
+  .form-label { font-size:13px; color:var(--muted); margin-bottom:6px; display:block; }
+  .form-input {
+    width:100%; padding:14px 16px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; color:var(--text); font-family:'Tajawal',sans-serif;
+    font-size:15px; outline:none; transition:border-color 0.2s; direction:rtl;
+  }
+  .form-input:focus { border-color:var(--accent); }
+  .btn-primary {
+    width:100%; padding:16px; background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+    color:#0f0f14; font-family:'Tajawal',sans-serif; font-size:16px; font-weight:900;
+    border:none; border-radius:14px; cursor:pointer; transition:opacity 0.2s; margin-bottom:12px;
+  }
+  .btn-primary:active { opacity:0.85; }
+  .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn-google {
+    width:100%; padding:14px; background:var(--card); border:1px solid var(--border);
+    color:var(--text); font-family:'Tajawal',sans-serif; font-size:15px; font-weight:700;
+    border-radius:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .btn-google:active { opacity:0.8; }
+  .divider { display:flex; align-items:center; gap:12px; margin:16px 0; color:var(--muted); font-size:13px; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  .screen { display: none; min-height: 100vh; padding-bottom: 80px; }
-  .screen.active { display: block; }
+  /* ROLE SELECTOR */
+  .role-screen {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; padding:40px 24px; text-align:center;
+  }
+  .role-title { font-size:26px; font-weight:900; margin-bottom:8px; }
+  .role-sub { color:var(--muted); font-size:14px; margin-bottom:36px; }
+  .role-cards { display:flex; flex-direction:column; gap:16px; width:100%; }
+  .role-card {
+    background:var(--card); border:2px solid var(--border); border-radius:var(--radius);
+    padding:24px; cursor:pointer; transition:all 0.2s; text-align:right;
+  }
+  .role-card:active { transform:scale(0.98); }
+  .role-card.selected { border-color:var(--accent); background:rgba(200,169,110,0.1); }
+  .role-icon { font-size:40px; margin-bottom:12px; }
+  .role-name { font-size:18px; font-weight:900; margin-bottom:4px; }
+  .role-desc { font-size:13px; color:var(--muted); }
 
+  /* HEADER */
   .header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(15,15,20,0.92);
-    backdrop-filter: blur(20px);
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
+    position:sticky; top:0; z-index:100; background:rgba(15,15,20,0.92);
+    backdrop-filter:blur(20px); padding:16px 20px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
   }
-  .header h1 { font-size: 22px; font-weight: 900; color: var(--accent); letter-spacing: -0.5px; }
+  .header h1 { font-size:22px; font-weight:900; color:var(--accent); }
   .header-back {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: var(--card2); border: none; color: var(--text);
-    font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    width:38px; height:38px; border-radius:50%; background:var(--card2);
+    border:none; color:var(--text); font-size:18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .user-avatar {
+    width:38px; height:38px; border-radius:50%; background:rgba(200,169,110,0.2);
+    border:2px solid var(--accent); display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:900; color:var(--accent); cursor:pointer;
   }
 
+  /* HOME */
   .hero {
-    padding: 30px 20px 20px;
-    background: linear-gradient(160deg, #1a1430 0%, #0f0f14 60%);
-    position: relative; overflow: hidden;
+    padding:30px 20px 20px; background:linear-gradient(160deg,#1a1430 0%,#0f0f14 60%);
+    position:relative; overflow:hidden;
   }
   .hero::before {
-    content: '';
-    position: absolute; top: -60px; left: -60px;
-    width: 240px; height: 240px;
-    background: radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%);
-    pointer-events: none;
+    content:''; position:absolute; top:-60px; left:-60px; width:240px; height:240px;
+    background:radial-gradient(circle,rgba(200,169,110,0.12) 0%,transparent 70%); pointer-events:none;
   }
   .hero-tag {
-    display: inline-block;
-    background: rgba(200,169,110,0.15);
-    color: var(--accent);
-    font-size: 12px; font-weight: 700;
-    padding: 4px 12px; border-radius: 20px;
-    margin-bottom: 12px; border: 1px solid var(--border);
+    display:inline-block; background:rgba(200,169,110,0.15); color:var(--accent);
+    font-size:12px; font-weight:700; padding:4px 12px; border-radius:20px;
+    margin-bottom:12px; border:1px solid var(--border);
   }
-  .hero h2 { font-size: 30px; font-weight: 900; line-height: 1.2; margin-bottom: 6px; }
-  .hero h2 span { color: var(--accent); }
-  .hero p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
-
+  .hero h2 { font-size:28px; font-weight:900; line-height:1.2; margin-bottom:6px; }
+  .hero h2 span { color:var(--accent); }
+  .hero p { color:var(--muted); font-size:14px; margin-bottom:20px; }
   .search-bar {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 12px 16px;
+    display:flex; align-items:center; gap:10px; background:var(--card);
+    border:1px solid var(--border); border-radius:14px; padding:12px 16px;
   }
   .search-bar input {
-    flex: 1; background: none; border: none; outline: none;
-    color: var(--text); font-family: 'Tajawal', sans-serif;
-    font-size: 15px; direction: rtl;
+    flex:1; background:none; border:none; outline:none;
+    color:var(--text); font-family:'Tajawal',sans-serif; font-size:15px; direction:rtl;
   }
-  .search-bar input::placeholder { color: var(--muted); }
-  .search-icon { color: var(--muted); font-size: 18px; }
+  .search-bar input::placeholder { color:var(--muted); }
 
-  .section { padding: 24px 20px 0; }
-  .section-title {
-    font-size: 17px; font-weight: 700; margin-bottom: 14px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section { padding:24px 20px 0; }
+  .section-title { font-size:17px; font-weight:700; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  .cats {
-    display: flex; gap: 10px; overflow-x: auto;
-    padding-bottom: 4px; scrollbar-width: none;
-  }
-  .cats::-webkit-scrollbar { display: none; }
+  .cats { display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+  .cats::-webkit-scrollbar { display:none; }
   .cat-btn {
-    flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 14px 16px;
-    cursor: pointer; transition: all 0.2s; min-width: 80px;
+    flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px;
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:14px 16px; cursor:pointer; transition:all 0.2s; min-width:80px;
   }
-  .cat-btn.active, .cat-btn:active { background: rgba(200,169,110,0.15); border-color: var(--accent); }
-  .cat-icon { font-size: 26px; }
-  .cat-label { font-size: 11px; color: var(--muted); font-weight: 500; white-space: nowrap; }
-  .cat-btn.active .cat-label { color: var(--accent); }
+  .cat-btn.active { background:rgba(200,169,110,0.15); border-color:var(--accent); }
+  .cat-icon { font-size:26px; }
+  .cat-label { font-size:11px; color:var(--muted); font-weight:500; white-space:nowrap; }
+  .cat-btn.active .cat-label { color:var(--accent); }
 
-  .places-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; }
+  .places-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 20px; }
   .place-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); overflow: hidden;
-    cursor: pointer; transition: transform 0.15s;
-    animation: fadeUp 0.4s ease both;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; cursor:pointer; transition:transform 0.15s; animation:fadeUp 0.4s ease both;
   }
-  .place-card:active { transform: scale(0.97); }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .place-card:active { transform:scale(0.97); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   .place-img {
-    width: 100%; height: 110px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 48px;
-    background: linear-gradient(135deg, var(--card2) 0%, #2a2a3a 100%);
+    width:100%; height:110px; display:flex; align-items:center; justify-content:center;
+    font-size:48px; background:linear-gradient(135deg,var(--card2) 0%,#2a2a3a 100%);
   }
-  .place-info { padding: 10px 12px; }
-  .place-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .place-type { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-  .place-meta { display: flex; align-items: center; justify-content: space-between; }
-  .rating { font-size: 11px; color: var(--accent); font-weight: 700; }
-  .price-tag { font-size: 10px; color: var(--green); background: rgba(78,203,141,0.1); padding: 2px 8px; border-radius: 20px; }
+  .place-info { padding:10px 12px; }
+  .place-name { font-size:13px; font-weight:700; margin-bottom:4px; }
+  .place-type { font-size:11px; color:var(--muted); margin-bottom:6px; }
+  .place-meta { display:flex; align-items:center; justify-content:space-between; }
+  .rating { font-size:11px; color:var(--accent); font-weight:700; }
+  .price-tag { font-size:10px; color:var(--green); background:rgba(78,203,141,0.1); padding:2px 8px; border-radius:20px; }
 
+  /* DETAIL */
   .detail-hero {
-    height: 200px; display: flex; align-items: center; justify-content: center;
-    font-size: 80px;
-    background: linear-gradient(135deg, #1a1a2e 0%, #2a1a3e 100%);
-    position: relative;
+    height:200px; display:flex; align-items:center; justify-content:center; font-size:80px;
+    background:linear-gradient(135deg,#1a1a2e 0%,#2a1a3e 100%); position:relative;
   }
   .detail-badge {
-    position: absolute; top: 16px; left: 16px;
-    background: rgba(200,169,110,0.9); color: #0f0f14;
-    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    position:absolute; top:16px; left:16px; background:rgba(200,169,110,0.9);
+    color:#0f0f14; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px;
   }
-  .detail-body { padding: 20px; }
-  .detail-name { font-size: 24px; font-weight: 900; margin-bottom: 4px; }
-  .detail-type { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
-  .detail-stats {
-    display: flex; gap: 16px; margin-bottom: 20px;
-    padding: 14px; background: var(--card2); border-radius: 14px;
-  }
-  .stat { text-align: center; flex: 1; }
-  .stat-val { font-size: 18px; font-weight: 900; color: var(--accent); }
-  .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .detail-body { padding:20px; }
+  .detail-name { font-size:24px; font-weight:900; margin-bottom:4px; }
+  .detail-type { color:var(--muted); font-size:14px; margin-bottom:14px; }
+  .detail-stats { display:flex; gap:16px; margin-bottom:20px; padding:14px; background:var(--card2); border-radius:14px; }
+  .stat { text-align:center; flex:1; }
+  .stat-val { font-size:18px; font-weight:900; color:var(--accent); }
+  .stat-lbl { font-size:11px; color:var(--muted); margin-top:2px; }
+  .services-list { margin-bottom:20px; }
+  .service-item { display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border); }
+  .service-name { font-size:14px; font-weight:600; }
+  .service-duration { font-size:12px; color:var(--muted); margin-top:2px; }
+  .service-price { font-size:15px; font-weight:700; color:var(--accent); }
 
-  .services-list { margin-bottom: 20px; }
-  .service-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 0; border-bottom: 1px solid var(--border);
-  }
-  .service-name { font-size: 14px; font-weight: 600; }
-  .service-duration { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .service-price { font-size: 15px; font-weight: 700; color: var(--accent); }
-
-  .btn-primary {
-    width: 100%; padding: 16px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-    color: #0f0f14; font-family: 'Tajawal', sans-serif;
-    font-size: 16px; font-weight: 900; border: none;
-    border-radius: 14px; cursor: pointer; transition: opacity 0.2s;
-  }
-  .btn-primary:active { opacity: 0.85; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .booking-section { padding: 20px; }
-  .booking-section h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
-
-  .dates-scroll { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin-bottom: 20px; }
-  .dates-scroll::-webkit-scrollbar { display: none; }
+  /* BOOKING */
+  .booking-section { padding:20px; }
+  .booking-section h3 { font-size:15px; font-weight:700; margin-bottom:12px; color:var(--accent); }
+  .dates-scroll { display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; margin-bottom:20px; }
+  .dates-scroll::-webkit-scrollbar { display:none; }
   .date-btn {
-    flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
-    gap: 4px; padding: 12px 16px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; cursor: pointer; transition: all 0.2s; min-width: 62px;
+    flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:12px 16px; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; cursor:pointer; transition:all 0.2s; min-width:62px;
   }
-  .date-btn.selected { background: var(--accent); border-color: var(--accent); }
-  .date-btn.selected .date-day, .date-btn.selected .date-num { color: #0f0f14; }
-  .date-day { font-size: 10px; color: var(--muted); font-weight: 600; }
-  .date-num { font-size: 20px; font-weight: 900; }
-
-  .times-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+  .date-btn.selected { background:var(--accent); border-color:var(--accent); }
+  .date-btn.selected .date-day, .date-btn.selected .date-num { color:#0f0f14; }
+  .date-day { font-size:10px; color:var(--muted); font-weight:600; }
+  .date-num { font-size:20px; font-weight:900; }
+  .times-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:20px; }
   .time-btn {
-    padding: 12px 8px; text-align: center;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; cursor: pointer;
-    font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 600;
-    color: var(--text); transition: all 0.2s;
+    padding:12px 8px; text-align:center; background:var(--card); border:1px solid var(--border);
+    border-radius:10px; cursor:pointer; font-family:'Tajawal',sans-serif; font-size:13px;
+    font-weight:600; color:var(--text); transition:all 0.2s;
   }
-  .time-btn.selected { background: rgba(200,169,110,0.2); border-color: var(--accent); color: var(--accent); }
-  .time-btn.booked { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+  .time-btn.selected { background:rgba(200,169,110,0.2); border-color:var(--accent); color:var(--accent); }
+  .time-btn.booked { opacity:0.35; cursor:not-allowed; text-decoration:line-through; }
 
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; display: block; }
-  .form-input {
-    width: 100%; padding: 14px 16px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; color: var(--text);
-    font-family: 'Tajawal', sans-serif; font-size: 15px;
-    outline: none; transition: border-color 0.2s; direction: rtl;
-  }
-  .form-input:focus { border-color: var(--accent); }
-
+  /* CONFIRMATION */
   .confirm-screen {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    min-height: 100vh; padding: 40px 20px; text-align: center;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; padding:40px 20px; text-align:center;
   }
   .confirm-icon {
-    width: 100px; height: 100px; border-radius: 50%;
-    background: rgba(78,203,141,0.15);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 50px; margin-bottom: 24px;
-    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    width:100px; height:100px; border-radius:50%; background:rgba(78,203,141,0.15);
+    display:flex; align-items:center; justify-content:center; font-size:50px; margin-bottom:24px;
+    animation:pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   }
-  @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .confirm-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
-  .confirm-sub { color: var(--muted); font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
-  .confirm-card {
-    width: 100%; background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px; text-align: right; margin-bottom: 24px;
-  }
-  .confirm-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-  }
-  .confirm-row:last-child { border-bottom: none; }
-  .confirm-label { font-size: 13px; color: var(--muted); }
-  .confirm-value { font-size: 14px; font-weight: 700; }
+  @keyframes pop { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+  .confirm-title { font-size:28px; font-weight:900; margin-bottom:8px; }
+  .confirm-sub { color:var(--muted); font-size:14px; margin-bottom:30px; line-height:1.6; }
+  .confirm-card { width:100%; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; text-align:right; margin-bottom:24px; }
+  .confirm-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+  .confirm-row:last-child { border-bottom:none; }
+  .confirm-label { font-size:13px; color:var(--muted); }
+  .confirm-value { font-size:14px; font-weight:700; }
 
-  .bookings-list { padding: 20px; }
+  /* MY BOOKINGS */
+  .bookings-list { padding:20px; }
   .booking-item {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 14px;
-    animation: fadeUp 0.3s ease both;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px; margin-bottom:12px; display:flex; align-items:center; gap:14px;
+    animation:fadeUp 0.3s ease both;
   }
-  .booking-emoji { font-size: 36px; }
-  .booking-info { flex: 1; }
-  .booking-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-  .booking-time { font-size: 12px; color: var(--muted); }
-  .booking-status { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-  .status-confirmed { background: rgba(78,203,141,0.15); color: var(--green); }
+  .booking-emoji { font-size:36px; }
+  .booking-info { flex:1; }
+  .booking-name { font-size:15px; font-weight:700; margin-bottom:3px; }
+  .booking-time { font-size:12px; color:var(--muted); }
+  .booking-status { font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
+  .status-confirmed { background:rgba(78,203,141,0.15); color:var(--green); }
 
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-state .empty-icon { font-size: 60px; margin-bottom: 16px; }
-  .empty-state p { font-size: 15px; }
+  /* DASHBOARD */
+  .dashboard-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:20px; }
+  .dash-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
+  .dash-val { font-size:32px; font-weight:900; color:var(--accent); }
+  .dash-lbl { font-size:12px; color:var(--muted); margin-top:4px; }
+  .dash-booking {
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:10px;
+  }
+  .dash-booking-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .dash-booking-info { font-size:12px; color:var(--muted); }
 
-  .loading-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+  /* PROFILE */
+  .profile-screen { padding:24px 20px; }
+  .profile-header { display:flex; align-items:center; gap:16px; margin-bottom:28px; padding:20px; background:var(--card); border-radius:var(--radius); border:1px solid var(--border); }
+  .profile-avatar { width:64px; height:64px; border-radius:50%; background:rgba(200,169,110,0.2); border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; color:var(--accent); }
+  .profile-name { font-size:18px; font-weight:900; }
+  .profile-email { font-size:12px; color:var(--muted); margin-top:2px; }
+  .profile-role { font-size:11px; color:var(--accent); background:rgba(200,169,110,0.15); padding:3px 10px; border-radius:20px; display:inline-block; margin-top:6px; }
+  .menu-item {
+    display:flex; align-items:center; gap:14px; padding:16px;
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    margin-bottom:10px; cursor:pointer;
+  }
+  .menu-icon { font-size:22px; }
+  .menu-text { font-size:15px; font-weight:600; }
+  .menu-arrow { margin-right:auto; color:var(--muted); }
+  .btn-logout {
+    width:100%; padding:16px; background:rgba(224,92,106,0.15); border:1px solid rgba(224,92,106,0.3);
+    color:var(--red); font-family:'Tajawal',sans-serif; font-size:16px; font-weight:700;
+    border-radius:14px; cursor:pointer; margin-top:20px;
+  }
 
+  .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+  .empty-state .empty-icon { font-size:60px; margin-bottom:16px; }
+  .empty-state p { font-size:15px; }
+  .loading-state { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; }
+
+  /* BOTTOM NAV */
   .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(15,15,20,0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border);
-    display: flex; z-index: 200;
-    padding-bottom: env(safe-area-inset-bottom);
+    position:fixed; bottom:0; left:0; right:0; background:rgba(15,15,20,0.95);
+    backdrop-filter:blur(20px); border-top:1px solid var(--border);
+    display:flex; z-index:200; padding-bottom:env(safe-area-inset-bottom);
   }
   .nav-btn {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; gap: 4px; padding: 12px 0; cursor: pointer;
-    border: none; background: none; color: var(--muted);
-    font-family: 'Tajawal', sans-serif; font-size: 10px; transition: color 0.2s;
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+    padding:12px 0; cursor:pointer; border:none; background:none; color:var(--muted);
+    font-family:'Tajawal',sans-serif; font-size:10px; transition:color 0.2s;
   }
-  .nav-btn.active { color: var(--accent); }
-  .nav-icon { font-size: 22px; }
+  .nav-btn.active { color:var(--accent); }
+  .nav-icon { font-size:22px; }
 
   .toast {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-    background: var(--card2); color: var(--text);
-    padding: 12px 20px; border-radius: 30px;
-    font-size: 13px; font-weight: 600;
-    border: 1px solid var(--border);
-    opacity: 0; transition: opacity 0.3s; z-index: 999; white-space: nowrap;
+    position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+    background:var(--card2); color:var(--text); padding:12px 20px; border-radius:30px;
+    font-size:13px; font-weight:600; border:1px solid var(--border);
+    opacity:0; transition:opacity 0.3s; z-index:999; white-space:nowrap;
   }
-  .toast.show { opacity: 1; }
+  .toast.show { opacity:1; }
 </style>
 </head>
 <body>
 
+<!-- AUTH -->
+<div id="authScreen" class="screen active">
+  <div class="auth-screen">
+    <div class="auth-logo">✦</div>
+    <div class="auth-title">احجز</div>
+    <div class="auth-sub">منصة الحجوزات الذكية</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">حساب جديد</button>
+    </div>
+    <div class="auth-form">
+      <div id="registerFields" style="display:none">
+        <div class="form-group">
+          <label class="form-label">الاسم الكامل</label>
+          <input class="form-input" id="authName" type="text" placeholder="أدخل اسمك">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input class="form-input" id="authEmail" type="email" placeholder="example@gmail.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <input class="form-input" id="authPassword" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" id="authBtn" onclick="handleEmailAuth()">🔐 دخول</button>
+      <div class="divider">أو</div>
+      <button class="btn-google" onclick="handleGoogleAuth()">
+        <span style="font-size:20px">G</span> الدخول بحساب Google
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ROLE SELECTOR -->
+<div id="roleScreen" class="screen">
+  <div class="role-screen">
+    <div style="font-size:50px;margin-bottom:16px">👋</div>
+    <div class="role-title">أهلاً! من أنت؟</div>
+    <div class="role-sub">اختر نوع حسابك لنخصص تجربتك</div>
+    <div class="role-cards">
+      <div class="role-card" onclick="selectRole('customer')">
+        <div class="role-icon">🛍️</div>
+        <div class="role-name">زبون</div>
+        <div class="role-desc">احجز مواعيد في المحلات والمطاعم والصالونات</div>
+      </div>
+      <div class="role-card" onclick="selectRole('owner')">
+        <div class="role-icon">🏪</div>
+        <div class="role-name">صاحب محل</div>
+        <div class="role-desc">أدر محلك وشوف كل الحجوزات ديالك</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HOME -->
-<div id="home" class="screen active">
+<div id="home" class="screen">
   <div class="header">
     <h1>✦ احجز</h1>
-    <button class="header-back" onclick="showToast('👋 أهلاً!')">👤</button>
+    <div id="userAvatarBtn" class="user-avatar" onclick="showProfile()">؟</div>
   </div>
   <div class="hero">
     <div class="hero-tag">منصة الحجوزات الذكية</div>
     <h2>احجز موعدك<br><span>في ثوانٍ</span></h2>
     <p>حلاقين، صالونات، مقاهي، مطاعم وأكثر</p>
     <div class="search-bar">
-      <span class="search-icon">🔍</span>
+      <span style="color:var(--muted);font-size:18px">🔍</span>
       <input type="text" placeholder="ابحث عن مكان..." oninput="filterPlaces(this.value)">
     </div>
   </div>
   <div class="section">
     <div class="section-title">الفئات</div>
-    <div class="cats" id="cats">
-      <button class="cat-btn active" onclick="filterCat('all', this)"><span class="cat-icon">🌟</span><span class="cat-label">الكل</span></button>
-      <button class="cat-btn" onclick="filterCat('barber', this)"><span class="cat-icon">💈</span><span class="cat-label">حلاقين</span></button>
-      <button class="cat-btn" onclick="filterCat('salon', this)"><span class="cat-icon">💅</span><span class="cat-label">صالونات</span></button>
-      <button class="cat-btn" onclick="filterCat('cafe', this)"><span class="cat-icon">☕</span><span class="cat-label">مقاهي</span></button>
-      <button class="cat-btn" onclick="filterCat('restaurant', this)"><span class="cat-icon">🍽️</span><span class="cat-label">مطاعم</span></button>
-      <button class="cat-btn" onclick="filterCat('spa', this)"><span class="cat-icon">🧖</span><span class="cat-label">سبا</span></button>
+    <div class="cats">
+      <button class="cat-btn active" onclick="filterCat('all',this)"><span class="cat-icon">🌟</span><span class="cat-label">الكل</span></button>
+      <button class="cat-btn" onclick="filterCat('barber',this)"><span class="cat-icon">💈</span><span class="cat-label">حلاقين</span></button>
+      <button class="cat-btn" onclick="filterCat('salon',this)"><span class="cat-icon">💅</span><span class="cat-label">صالونات</span></button>
+      <button class="cat-btn" onclick="filterCat('cafe',this)"><span class="cat-icon">☕</span><span class="cat-label">مقاهي</span></button>
+      <button class="cat-btn" onclick="filterCat('restaurant',this)"><span class="cat-icon">🍽️</span><span class="cat-label">مطاعم</span></button>
+      <button class="cat-btn" onclick="filterCat('spa',this)"><span class="cat-icon">🧖</span><span class="cat-label">سبا</span></button>
     </div>
   </div>
   <div class="section"><div class="section-title">الأماكن المتاحة</div></div>
@@ -344,20 +403,9 @@
     <div class="dates-scroll" id="datesScroll"></div>
     <h3>⏰ اختر الوقت</h3>
     <div class="times-grid" id="timesGrid"></div>
-    <h3>👤 بياناتك</h3>
+    <h3>✂️ الخدمة</h3>
     <div class="form-group">
-      <label class="form-label">الاسم الكامل</label>
-      <input class="form-input" id="userName" type="text" placeholder="أدخل اسمك">
-    </div>
-    <div class="form-group">
-      <label class="form-label">رقم الهاتف</label>
-      <input class="form-input" id="userPhone" type="tel" placeholder="05xxxxxxxx">
-    </div>
-    <div class="form-group">
-      <label class="form-label">الخدمة المطلوبة</label>
-      <select class="form-input" id="userService">
-        <option value="">-- اختر الخدمة --</option>
-      </select>
+      <select class="form-input" id="userService"><option value="">-- اختر الخدمة --</option></select>
     </div>
     <button class="btn-primary" id="confirmBtn" onclick="confirmBooking()">✅ تأكيد الحجز</button>
   </div>
@@ -368,7 +416,7 @@
   <div class="confirm-screen">
     <div class="confirm-icon">🎉</div>
     <div class="confirm-title">تم الحجز!</div>
-    <div class="confirm-sub">موعدك محجوز بنجاح في Firebase ☁️<br>سنرسل لك تذكيراً قبل الموعد</div>
+    <div class="confirm-sub">موعدك محجوز بنجاح ☁️<br>سنرسل لك تذكيراً قبل الموعد</div>
     <div class="confirm-card" id="confirmCard"></div>
     <button class="btn-primary" onclick="goHome()">🏠 الرئيسية</button>
   </div>
@@ -380,74 +428,288 @@
   <div class="bookings-list" id="bookingsList"></div>
 </div>
 
+<!-- DASHBOARD (صاحب المحل) -->
+<div id="dashboard" class="screen">
+  <div class="header"><h1>📊 لوحة التحكم</h1></div>
+  <div class="dashboard-stats" id="dashStats"></div>
+  <div style="padding:0 20px">
+    <div class="section-title" style="margin-bottom:14px">آخر الحجوزات</div>
+    <div id="dashBookings"></div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="profileScreen" class="screen">
+  <div class="header"><h1>حسابي</h1></div>
+  <div class="profile-screen">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">؟</div>
+      <div>
+        <div class="profile-name" id="profileName">-</div>
+        <div class="profile-email" id="profileEmail">-</div>
+        <div class="profile-role" id="profileRole">-</div>
+      </div>
+    </div>
+    <div class="menu-item" onclick="showMyBookings()">
+      <span class="menu-icon">📋</span>
+      <span class="menu-text">حجوزاتي</span>
+      <span class="menu-arrow">←</span>
+    </div>
+    <div class="menu-item" id="dashboardMenuItem" style="display:none" onclick="showDashboard()">
+      <span class="menu-icon">📊</span>
+      <span class="menu-text">لوحة التحكم</span>
+      <span class="menu-arrow">←</span>
+    </div>
+    <button class="btn-logout" onclick="handleLogout()">🚪 تسجيل الخروج</button>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
-<div class="bottom-nav">
+<div class="bottom-nav" id="bottomNav" style="display:none">
   <button class="nav-btn active" id="nav-home" onclick="goHome()"><span class="nav-icon">🏠</span>الرئيسية</button>
   <button class="nav-btn" id="nav-mybookings" onclick="showMyBookings()"><span class="nav-icon">📋</span>حجوزاتي</button>
-  <button class="nav-btn" id="nav-profile" onclick="showToast('قريباً!')"><span class="nav-icon">👤</span>حسابي</button>
+  <button class="nav-btn" id="nav-profile" onclick="showProfile()"><span class="nav-icon">👤</span>حسابي</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDh7MrJWmGr27Pc67qMPgvQgkz-aMoX7mQ",
-    authDomain: "hajiz-app-7fdf9.firebaseapp.com",
-    projectId: "hajiz-app-7fdf9",
-    storageBucket: "hajiz-app-7fdf9.firebasestorage.app",
-    messagingSenderId: "44993019040",
-    appId: "1:44993019040:web:a5816686df3a659dd85dc5"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDh7MrJWmGr27Pc67qMPgvQgkz-aMoX7mQ",
+  authDomain: "hajiz-app-7fdf9.firebaseapp.com",
+  projectId: "hajiz-app-7fdf9",
+  storageBucket: "hajiz-app-7fdf9.firebasestorage.app",
+  messagingSenderId: "44993019040",
+  appId: "1:44993019040:web:a5816686df3a659dd85dc5"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
-  // حفظ الحجز في Firestore
-  window.saveBookingToFirebase = async function(booking) {
+let currentUser = null;
+let currentRole = null;
+let isNewUser = false;
+
+// AUTH STATE
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    // جلب الرول من Firestore
     try {
-      await addDoc(collection(db, "bookings"), {
-        ...booking,
-        createdAt: serverTimestamp()
-      });
-      return true;
-    } catch (e) {
-      console.error("خطأ في Firebase:", e);
-      return false;
+      const q = query(collection(db, "users"), where("uid", "==", user.uid));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        currentRole = snap.docs[0].data().role;
+        window.currentRole = currentRole;
+        initApp();
+      } else if (isNewUser) {
+        // مستخدم جديد - اختيار الرول
+        document.getElementById('bottomNav').style.display = 'none';
+        showScreen('roleScreen');
+      } else {
+        // مستخدم قديم بدون رول - اعطيه customer
+        currentRole = 'customer';
+        window.currentRole = currentRole;
+        await saveUserToFirestore(user, 'customer');
+        initApp();
+      }
+    } catch(e) {
+      currentRole = 'customer';
+      window.currentRole = currentRole;
+      initApp();
     }
-  };
+  } else {
+    currentUser = null;
+    currentRole = null;
+    document.getElementById('bottomNav').style.display = 'none';
+    showScreen('authScreen');
+  }
+});
 
-  // جلب الحجوزات من Firestore
-  window.loadBookingsFromFirebase = async function() {
-    try {
-      const q = query(collection(db, "bookings"), orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (e) {
-      console.error("خطأ في التحميل:", e);
-      return [];
+function initApp() {
+  document.getElementById('bottomNav').style.display = 'flex';
+  updateUserUI();
+  if (currentRole === 'owner') {
+    document.getElementById('dashboardMenuItem').style.display = 'flex';
+    showDashboard();
+    setActiveNav('');
+  } else {
+    goHome();
+  }
+}
+
+function updateUserUI() {
+  if (!currentUser) return;
+  const name = currentUser.displayName || currentUser.email.split('@')[0];
+  const initial = name.charAt(0).toUpperCase();
+  document.getElementById('userAvatarBtn').textContent = initial;
+  document.getElementById('profileAvatar').textContent = initial;
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('profileRole').textContent = currentRole === 'owner' ? '🏪 صاحب محل' : '🛍️ زبون';
+  if (currentRole === 'owner') {
+    document.getElementById('dashboardMenuItem').style.display = 'flex';
+  }
+}
+
+async function saveUserToFirestore(user, role) {
+  try {
+    await addDoc(collection(db, "users"), {
+      uid: user.uid,
+      name: user.displayName || '',
+      email: user.email,
+      role: role,
+      createdAt: serverTimestamp()
+    });
+  } catch(e) { console.error(e); }
+}
+
+// EMAIL AUTH
+window.handleEmailAuth = async function() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+  const isRegister = document.getElementById('authBtn').textContent.includes('إنشاء');
+
+  if (!email || !password) return showToast('⚠️ أدخل البريد وكلمة المرور');
+
+  const btn = document.getElementById('authBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ جاري...';
+
+  try {
+    if (isRegister) {
+      if (!name) { showToast('⚠️ أدخل اسمك'); btn.disabled=false; btn.textContent='✨ إنشاء حساب'; return; }
+      isNewUser = true;
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(cred.user, { displayName: name });
+    } else {
+      isNewUser = false;
+      await signInWithEmailAndPassword(auth, email, password);
     }
-  };
+  } catch(e) {
+    const msgs = {
+      'auth/email-already-in-use': '⚠️ البريد مستخدم من قبل',
+      'auth/wrong-password': '⚠️ كلمة المرور غلط',
+      'auth/user-not-found': '⚠️ الحساب غير موجود',
+      'auth/weak-password': '⚠️ كلمة المرور قصيرة جداً',
+      'auth/invalid-email': '⚠️ البريد غير صحيح'
+    };
+    showToast(msgs[e.code] || '❌ خطأ، حاول مجدداً');
+    btn.disabled = false;
+    btn.textContent = isRegister ? '✨ إنشاء حساب' : '🔐 دخول';
+  }
+};
 
-  console.log("✅ Firebase متصل بنجاح!");
+// GOOGLE AUTH
+window.handleGoogleAuth = async function() {
+  try {
+    isNewUser = true;
+    await signInWithPopup(auth, googleProvider);
+  } catch(e) {
+    showToast('❌ فشل الدخول بـ Google');
+  }
+};
+
+// SELECT ROLE
+window.selectRole = async function(role) {
+  if (!currentUser) return;
+  currentRole = role;
+  window.currentRole = role;
+  await saveUserToFirestore(currentUser, role);
+  initApp();
+};
+
+// LOGOUT
+window.handleLogout = async function() {
+  await signOut(auth);
+  showToast('👋 تم تسجيل الخروج');
+};
+
+// SAVE BOOKING
+window.saveBookingToFirebase = async function(booking) {
+  try {
+    await addDoc(collection(db, "bookings"), {
+      ...booking,
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      createdAt: serverTimestamp()
+    });
+    return true;
+  } catch(e) { console.error(e); return false; }
+};
+
+// LOAD MY BOOKINGS
+window.loadMyBookings = async function() {
+  try {
+    const q = query(collection(db, "bookings"), where("userId","==",currentUser.uid), orderBy("createdAt","desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({id:d.id,...d.data()}));
+  } catch(e) { return []; }
+};
+
+// LOAD ALL BOOKINGS (صاحب المحل)
+window.loadAllBookings = async function() {
+  try {
+    const q = query(collection(db, "bookings"), orderBy("createdAt","desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({id:d.id,...d.data()}));
+  } catch(e) { return []; }
+};
+
+// SHOW DASHBOARD
+window.showDashboard = async function() {
+  setActiveNav('');
+  showScreen('dashboard');
+  document.getElementById('dashStats').innerHTML = '<div class="loading-state">⏳ جاري التحميل...</div>';
+  document.getElementById('dashBookings').innerHTML = '';
+
+  const bookings = await window.loadAllBookings();
+
+  const today = new Date().toLocaleDateString('ar-SA');
+  const todayCount = bookings.filter(b => b.date === today).length;
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="dash-card"><div class="dash-val">${bookings.length}</div><div class="dash-lbl">إجمالي الحجوزات</div></div>
+    <div class="dash-card"><div class="dash-val">${todayCount}</div><div class="dash-lbl">حجوزات اليوم</div></div>
+  `;
+
+  if (!bookings.length) {
+    document.getElementById('dashBookings').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>لا توجد حجوزات بعد</p></div>';
+    return;
+  }
+
+  document.getElementById('dashBookings').innerHTML = bookings.slice(0,20).map(b => `
+    <div class="dash-booking">
+      <div class="dash-booking-name">${b.emoji || ''} ${b.place} — ${b.service}</div>
+      <div class="dash-booking-info">👤 ${b.name} • 📅 ${b.date} • ⏰ ${b.time}</div>
+      <div class="dash-booking-info" style="margin-top:2px">📞 ${b.phone} • 📧 ${b.userEmail || ''}</div>
+    </div>`).join('');
+};
+
+console.log("✅ Firebase Auth + Firestore متصل!");
 </script>
 
 <script>
 const PLACES = [
-  { id:1, name:'صالون الأناقة', type:'barber', cat:'barber', emoji:'💈', rating:'4.9', price:'من 30 ر.س', wait:'~10 دقائق',
+  { id:1, name:'صالون الأناقة', cat:'barber', emoji:'💈', rating:'4.9', price:'من 30 ر.س', wait:'~10 دقائق',
     services:['قص شعر - 30 ر.س / 30 دقيقة','حلاقة ذقن - 20 ر.س / 20 دقيقة','قص + ذقن - 45 ر.س / 45 دقيقة','تلوين - 80 ر.س / 90 دقيقة'] },
-  { id:2, name:'بيوتي بار', type:'salon', cat:'salon', emoji:'💅', rating:'4.8', price:'من 50 ر.س', wait:'~15 دقائق',
+  { id:2, name:'بيوتي بار', cat:'salon', emoji:'💅', rating:'4.8', price:'من 50 ر.س', wait:'~15 دقائق',
     services:['مانيكير - 50 ر.س / 45 دقيقة','باديكير - 60 ر.س / 60 دقيقة','كيراتين - 200 ر.س / 120 دقيقة','صبغة شعر - 150 ر.س / 90 دقيقة'] },
-  { id:3, name:'كافيه مُود', type:'cafe', cat:'cafe', emoji:'☕', rating:'4.7', price:'من 20 ر.س', wait:'~5 دقائق',
+  { id:3, name:'كافيه مُود', cat:'cafe', emoji:'☕', rating:'4.7', price:'من 20 ر.س', wait:'~5 دقائق',
     services:['طاولة للشخصين - 20 ر.س / 60 دقيقة','طاولة للأربعة - 30 ر.س / 90 دقيقة','غرفة خاصة - 100 ر.س / 120 دقيقة'] },
-  { id:4, name:'مطعم أصيل', type:'restaurant', cat:'restaurant', emoji:'🍽️', rating:'4.9', price:'من 60 ر.س', wait:'~20 دقائق',
+  { id:4, name:'مطعم أصيل', cat:'restaurant', emoji:'🍽️', rating:'4.9', price:'من 60 ر.س', wait:'~20 دقائق',
     services:['طاولة غداء - 60 ر.س / 90 دقيقة','طاولة عشاء - 80 ر.س / 120 دقيقة','حفلة خاصة - 500 ر.س / 180 دقيقة'] },
-  { id:5, name:'سبا الراحة', type:'spa', cat:'spa', emoji:'🧖', rating:'5.0', price:'من 120 ر.س', wait:'~30 دقيقة',
+  { id:5, name:'سبا الراحة', cat:'spa', emoji:'🧖', rating:'5.0', price:'من 120 ر.س', wait:'~30 دقيقة',
     services:['مساج كامل - 120 ر.س / 60 دقيقة','جلسة سبا - 180 ر.س / 90 دقيقة','حمام مغربي - 200 ر.س / 120 دقيقة'] },
-  { id:6, name:'باربر كينج', type:'barber', cat:'barber', emoji:'✂️', rating:'4.6', price:'من 25 ر.س', wait:'~5 دقائق',
+  { id:6, name:'باربر كينج', cat:'barber', emoji:'✂️', rating:'4.6', price:'من 25 ر.س', wait:'~5 دقائق',
     services:['قص أطفال - 25 ر.س / 20 دقيقة','قص رجالي - 35 ر.س / 30 دقيقة','باكج كامل - 55 ر.س / 60 دقيقة'] },
 ];
 
@@ -455,61 +717,51 @@ let currentPlace = null;
 let selectedDate = null;
 let selectedTime = null;
 let currentCat = 'all';
+let authMode = 'login';
+
+window.switchAuthTab = function(mode) {
+  authMode = mode;
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (mode==='login'&&i===0)||(mode==='register'&&i===1)));
+  document.getElementById('registerFields').style.display = mode==='register'?'block':'none';
+  document.getElementById('authBtn').textContent = mode==='register'?'✨ إنشاء حساب':'🔐 دخول';
+};
 
 function renderPlaces(places) {
   const grid = document.getElementById('placesGrid');
   grid.innerHTML = '';
-  if (!places.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0">لا توجد نتائج 😕</div>';
-    return;
-  }
-  places.forEach((p, i) => {
+  if (!places.length) { grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0">لا توجد نتائج 😕</div>'; return; }
+  places.forEach((p,i) => {
     const card = document.createElement('div');
     card.className = 'place-card';
-    card.style.animationDelay = `${i * 0.07}s`;
-    card.innerHTML = `
-      <div class="place-img">${p.emoji}</div>
-      <div class="place-info">
-        <div class="place-name">${p.name}</div>
-        <div class="place-type">${p.cat === 'barber' ? 'حلاقة رجالية' : p.cat === 'salon' ? 'صالون نسائي' : p.cat === 'cafe' ? 'مقهى' : p.cat === 'restaurant' ? 'مطعم' : 'سبا'}</div>
-        <div class="place-meta">
-          <span class="rating">⭐ ${p.rating}</span>
-          <span class="price-tag">${p.price}</span>
-        </div>
-      </div>`;
+    card.style.animationDelay = `${i*0.07}s`;
+    const types = {barber:'حلاقة رجالية',salon:'صالون نسائي',cafe:'مقهى',restaurant:'مطعم',spa:'سبا'};
+    card.innerHTML = `<div class="place-img">${p.emoji}</div><div class="place-info"><div class="place-name">${p.name}</div><div class="place-type">${types[p.cat]}</div><div class="place-meta"><span class="rating">⭐ ${p.rating}</span><span class="price-tag">${p.price}</span></div></div>`;
     card.onclick = () => openDetail(p);
     grid.appendChild(card);
   });
 }
 
-function filterCat(cat, btn) {
+window.filterCat = function(cat, btn) {
   currentCat = cat;
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderPlaces(cat === 'all' ? PLACES : PLACES.filter(p => p.cat === cat));
-}
+  renderPlaces(cat==='all'?PLACES:PLACES.filter(p=>p.cat===cat));
+};
 
-function filterPlaces(q) {
-  renderPlaces(PLACES.filter(p => (currentCat === 'all' || p.cat === currentCat) && p.name.includes(q)));
-}
+window.filterPlaces = function(q) {
+  renderPlaces(PLACES.filter(p=>(currentCat==='all'||p.cat===currentCat)&&p.name.includes(q)));
+};
 
-function openDetail(place) {
+window.openDetail = function(place) {
   currentPlace = place;
   document.getElementById('detailTitle').textContent = place.name;
   const services = place.services.map(s => {
     const parts = s.split(' - ');
-    const name = parts[0];
-    const rest = parts[1] ? parts[1].split(' / ') : ['',''];
-    return `<div class="service-item">
-      <div><div class="service-name">${name}</div><div class="service-duration">⏱ ${rest[1] || ''}</div></div>
-      <div class="service-price">${rest[0] || ''}</div>
-    </div>`;
+    const rest = parts[1]?parts[1].split(' / '):['',''];
+    return `<div class="service-item"><div><div class="service-name">${parts[0]}</div><div class="service-duration">⏱ ${rest[1]||''}</div></div><div class="service-price">${rest[0]||''}</div></div>`;
   }).join('');
   document.getElementById('detailContent').innerHTML = `
-    <div class="detail-hero">
-      <span style="font-size:80px">${place.emoji}</span>
-      <div class="detail-badge">⭐ ${place.rating}</div>
-    </div>
+    <div class="detail-hero"><span style="font-size:80px">${place.emoji}</span><div class="detail-badge">⭐ ${place.rating}</div></div>
     <div class="detail-body">
       <div class="detail-name">${place.name}</div>
       <div class="detail-type">${place.price} • انتظار ${place.wait}</div>
@@ -522,33 +774,26 @@ function openDetail(place) {
       <button class="btn-primary" onclick="openBooking()">📅 احجز الآن</button>
     </div>`;
   showScreen('detail');
-}
+};
 
-function openBooking() {
-  buildDates();
-  buildTimes();
-  buildServices();
+window.openBooking = function() {
+  buildDates(); buildTimes(); buildServices();
   showScreen('booking');
-}
+};
 
 function buildDates() {
   const container = document.getElementById('datesScroll');
   container.innerHTML = '';
   const days = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
   const today = new Date();
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
+  for (let i=0;i<7;i++) {
+    const d = new Date(today); d.setDate(today.getDate()+i);
     const btn = document.createElement('button');
-    btn.className = 'date-btn' + (i === 0 ? ' selected' : '');
+    btn.className = 'date-btn'+(i===0?' selected':'');
     btn.innerHTML = `<span class="date-day">${days[d.getDay()]}</span><span class="date-num">${d.getDate()}</span>`;
     const dateStr = d.toLocaleDateString('ar-SA');
-    if (i === 0) selectedDate = dateStr;
-    btn.onclick = () => {
-      document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedDate = dateStr;
-    };
+    if (i===0) selectedDate = dateStr;
+    btn.onclick = () => { document.querySelectorAll('.date-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); selectedDate=dateStr; };
     container.appendChild(btn);
   }
 }
@@ -557,18 +802,12 @@ function buildTimes() {
   const container = document.getElementById('timesGrid');
   container.innerHTML = '';
   const slots = ['9:00','9:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
-  const booked = [2, 5, 9];
-  slots.forEach((t, i) => {
+  const booked = [2,5,9];
+  slots.forEach((t,i) => {
     const btn = document.createElement('button');
-    btn.className = 'time-btn' + (booked.includes(i) ? ' booked' : '');
+    btn.className = 'time-btn'+(booked.includes(i)?' booked':'');
     btn.textContent = t;
-    if (!booked.includes(i)) {
-      btn.onclick = () => {
-        document.querySelectorAll('.time-btn:not(.booked)').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedTime = t;
-      };
-    }
+    if (!booked.includes(i)) btn.onclick = () => { document.querySelectorAll('.time-btn:not(.booked)').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); selectedTime=t; };
     container.appendChild(btn);
   });
 }
@@ -576,109 +815,87 @@ function buildTimes() {
 function buildServices() {
   const sel = document.getElementById('userService');
   sel.innerHTML = '<option value="">-- اختر الخدمة --</option>';
-  currentPlace.services.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.split(' - ')[0];
-    opt.textContent = s;
-    sel.appendChild(opt);
-  });
+  currentPlace.services.forEach(s => { const opt=document.createElement('option'); opt.value=s.split(' - ')[0]; opt.textContent=s; sel.appendChild(opt); });
 }
 
-async function confirmBooking() {
-  const name = document.getElementById('userName').value.trim();
-  const phone = document.getElementById('userPhone').value.trim();
+window.confirmBooking = async function() {
   const service = document.getElementById('userService').value;
-
-  if (!name) return showToast('⚠️ أدخل اسمك');
-  if (!phone) return showToast('⚠️ أدخل رقم هاتفك');
   if (!service) return showToast('⚠️ اختر الخدمة');
   if (!selectedDate) return showToast('⚠️ اختر التاريخ');
   if (!selectedTime) return showToast('⚠️ اختر الوقت');
 
   const btn = document.getElementById('confirmBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ جاري الحفظ...';
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
 
+  const user = window._currentUser || {};
   const booking = {
-    place: currentPlace.name,
-    emoji: currentPlace.emoji,
-    name, phone, service,
-    date: selectedDate,
-    time: selectedTime,
-    status: 'confirmed'
+    place: currentPlace.name, emoji: currentPlace.emoji,
+    name: user.displayName || user.email || 'زبون',
+    phone: user.phoneNumber || '-',
+    service, date: selectedDate, time: selectedTime, status:'confirmed'
   };
 
   const saved = await window.saveBookingToFirebase(booking);
-
   if (saved) {
     document.getElementById('confirmCard').innerHTML = `
       <div class="confirm-row"><span class="confirm-label">المكان</span><span class="confirm-value">${currentPlace.emoji} ${booking.place}</span></div>
       <div class="confirm-row"><span class="confirm-label">الخدمة</span><span class="confirm-value">${booking.service}</span></div>
       <div class="confirm-row"><span class="confirm-label">التاريخ</span><span class="confirm-value">${booking.date}</span></div>
       <div class="confirm-row"><span class="confirm-label">الوقت</span><span class="confirm-value">${booking.time}</span></div>
-      <div class="confirm-row"><span class="confirm-label">الاسم</span><span class="confirm-value">${booking.name}</span></div>
-      <div class="confirm-row"><span class="confirm-label">الحالة</span><span class="confirm-value" style="color:var(--green)">✅ محفوظ في Firebase</span></div>
-    `;
+      <div class="confirm-row"><span class="confirm-label">الحالة</span><span class="confirm-value" style="color:var(--green)">✅ محفوظ</span></div>`;
     showScreen('confirmation');
-    document.getElementById('userName').value = '';
-    document.getElementById('userPhone').value = '';
     selectedTime = null;
   } else {
-    showToast('❌ خطأ في الحفظ، حاول مجدداً');
+    showToast('❌ خطأ في الحفظ');
   }
+  btn.disabled=false; btn.textContent='✅ تأكيد الحجز';
+};
 
-  btn.disabled = false;
-  btn.textContent = '✅ تأكيد الحجز';
-}
-
-async function showMyBookings() {
+window.showMyBookings = async function() {
   setActiveNav('nav-mybookings');
   showScreen('mybookings');
   const list = document.getElementById('bookingsList');
-  list.innerHTML = '<div class="loading-state">⏳ جاري التحميل من Firebase...</div>';
-
-  const bookings = await window.loadBookingsFromFirebase();
-
+  list.innerHTML = '<div class="loading-state">⏳ جاري التحميل...</div>';
+  const bookings = await window.loadMyBookings();
   if (!bookings.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><p>لا توجد حجوزات بعد<br>احجز موعدك الأول!</p></div>`;
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>لا توجد حجوزات بعد<br>احجز موعدك الأول!</p></div>';
   } else {
-    list.innerHTML = bookings.map((b, i) => `
+    list.innerHTML = bookings.map((b,i) => `
       <div class="booking-item" style="animation-delay:${i*0.06}s">
         <div class="booking-emoji">${b.emoji}</div>
-        <div class="booking-info">
-          <div class="booking-name">${b.place}</div>
-          <div class="booking-time">📅 ${b.date} • ⏰ ${b.time}</div>
-          <div class="booking-time" style="margin-top:2px">✂️ ${b.service}</div>
-        </div>
+        <div class="booking-info"><div class="booking-name">${b.place}</div><div class="booking-time">📅 ${b.date} • ⏰ ${b.time}</div><div class="booking-time" style="margin-top:2px">✂️ ${b.service}</div></div>
         <div class="booking-status status-confirmed">مؤكد ✓</div>
       </div>`).join('');
   }
-}
+};
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+window.showProfile = function() {
+  setActiveNav('nav-profile');
+  showScreen('profileScreen');
+};
+
+window.showScreen = function(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
+  window.scrollTo(0,0);
+};
 
-function goHome() {
+window.goHome = function() {
   setActiveNav('nav-home');
+  renderPlaces(PLACES);
   showScreen('home');
-}
+};
 
-function setActiveNav(id) {
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+window.setActiveNav = function(id) {
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if (id) document.getElementById(id)?.classList.add('active');
+};
 
-function showToast(msg) {
+window.showToast = function(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-renderPlaces(PLACES);
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+};
 </script>
 </body>
 </html>
